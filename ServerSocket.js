@@ -5,21 +5,25 @@ const scanner = require('readline').createInterface({
 });
 
 class Server {
-    constructor(size) {
+    constructor(MAX_NUM_CONNECTIONS) {
         this.sockets = [];
-        this.MAX_NUM_CONNECTIONS = size;
+        this.MAX_NUM_CONNECTIONS = MAX_NUM_CONNECTIONS;
         this.numConnections = 0;
 
         net.createServer((s) => {
+            // Room capacity mee
             if (this.numConnections >= this.MAX_NUM_CONNECTIONS) {
-                s.end("Max number in room reached");
+                s.end("Room at capacity");
             }
-            let socketObj = {
-                socket: s,
-                id: ++this.numConnections
-            };
-            this.setSocketEvents(socketObj);
-            this.sockets.push(socketObj);
+            else {
+                let socketObj = {
+                    socket: s,
+                    id: ++this.numConnections
+                };
+                this.setSocketEvents(socketObj);
+                this.sockets.push(socketObj);
+            }
+            
         })
         .on('error', (error) => {
             console.error(error.message);
@@ -31,8 +35,8 @@ class Server {
 
     setSocketEvents(socketObj) {
         var self = this;
-        socketObj.socket.on('data', function (data) {
 
+        socketObj.socket.on('data', function (data) {
             var message = data.toString();
 
             self.broadcast(socketObj.id, message);
@@ -77,6 +81,7 @@ class Server {
     }
 }
 
+process.stdout.write('Please enter the room capacity\n> ');
 scanner.on('line', (capacity) => {
     let size = Number.parseInt(capacity);
 
@@ -90,5 +95,4 @@ scanner.on('line', (capacity) => {
     }
 });
 
-process.stdout.write('Please enter the room capacity\n> ');
 

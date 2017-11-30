@@ -9,9 +9,16 @@ let myNick = null;
 function startClient() {
     client = net.connect({ 
         port: port, 
-        host: host, 
-    }, () => {
-        client.write(`${myNick} joined the room.`);
+        host: host,
+    });
+
+    client.on('end', (err) => {
+        console.log('Disconnected from server');
+        process.exit();
+    });
+    
+    client.on('connect', () => {
+        client.write(`${myNick} joined the room`);
     });
 
     client.on('data', function (data) {
@@ -19,10 +26,7 @@ function startClient() {
         console.log(data);
     });
 
-    client.on('end', (err) => {
-        console.log('Disconnected from server');
-        process.exit();
-    });
+
 }
 
 function getNick() {
