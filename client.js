@@ -31,6 +31,11 @@ function getNick() {
     console.log("What's your name?");
 }
 
+function isNicknameUnique(nick) {
+    console.log(`Determining if ${nick} is unique...`);
+    
+}
+
 const scanner = readline.createInterface({
     input: process.stdin,
     output: process.stdout
@@ -41,7 +46,11 @@ scanner.on('line', function (line) {
         line = line.trim();
         if (line.length < 1) {
             getNick();
-        } else {
+        }
+        if (!isNicknameUnique(line)) {
+            getNick();
+        }
+        else {
             myNick = line;
             startClient();
         }

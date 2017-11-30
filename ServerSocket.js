@@ -8,7 +8,8 @@ class Server {
         net.createServer((s) => {
             let socketObj = {
                 socket: s,
-                id: ++this.numConnections
+                id: ++this.numConnections,
+                nickname: 'default_nick'
             };
             this.setSocketEvents(socketObj);
             this.sockets.push(socketObj);
