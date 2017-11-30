@@ -12,10 +12,9 @@ function startClient() {
         host: host,
     });
     
+    
     client.on('connect', () => {
-        const date = new Date();
-        const currentTime = `[${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}]`;
-        client.write(`${currentTime} ${myNick} joined the room.`);
+        client.write(`/nick ${myNick}`);
     });
 
     client.on('end', (err) => {
@@ -33,6 +32,7 @@ function getNick() {
     console.log("What's your name?");
 }
 
+
 const scanner = readline.createInterface({
     input: process.stdin,
     output: process.stdout
@@ -43,7 +43,8 @@ scanner.on('line', function (line) {
         line = line.trim();
         if (line.length < 1) {
             getNick();
-        } else {
+        }
+        else {
             myNick = line;
             startClient();
         }
