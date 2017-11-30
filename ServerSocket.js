@@ -7,7 +7,7 @@ class Server {
 
         net.createServer((s) => {
             let socketObj = {
-                socket: s,
+                socket: ,
                 id: ++this.numConnections
             };
             this.setSocketEvents(socketObj);
