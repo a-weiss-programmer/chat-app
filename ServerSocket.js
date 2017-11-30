@@ -11,7 +11,7 @@ class Server {
         this.numConnections = 0;
 
         net.createServer((s) => {
-            // Room capacity mee
+            // Room capacity meet
             if (this.numConnections >= this.MAX_NUM_CONNECTIONS) {
                 s.end("Room at capacity");
             }
