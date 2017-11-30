@@ -44,7 +44,9 @@ scanner.on('line', function (line) {
             startClient();
         }
     } else {
-        client.write(myNick + ": " + line);
+        let date = new Date();
+        let currentTime = `[${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}]`;
+        client.write(`${currentTime} ${myNick}: ${line}`);
     }
 });
 
