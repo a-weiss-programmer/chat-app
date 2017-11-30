@@ -12,10 +12,9 @@ function startClient() {
         host: host,
     });
     
+    
     client.on('connect', () => {
-        const date = new Date();
-        const currentTime = `[${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}]`;
-        client.write(`${currentTime} ${myNick} joined the room.`);
+        client.write(`/nick ${myNick}`);
     });
 
     client.on('end', (err) => {
@@ -33,10 +32,6 @@ function getNick() {
     console.log("What's your name?");
 }
 
-function isNicknameUnique(nick) {
-    console.log(`Determining if ${nick} is unique...`);
-    
-}
 
 const scanner = readline.createInterface({
     input: process.stdin,
@@ -47,9 +42,6 @@ scanner.on('line', function (line) {
     if (!myNick) {
         line = line.trim();
         if (line.length < 1) {
-            getNick();
-        }
-        if (!isNicknameUnique(line)) {
             getNick();
         }
         else {

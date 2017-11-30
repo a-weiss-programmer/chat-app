@@ -1,4 +1,5 @@
 const net = require('net');
+const utils = require('./utils');
 const scanner = require('readline').createInterface({
     input: process.stdin,
     output: process.stdout
@@ -19,7 +20,7 @@ class Server {
                 let socketObj = {
                     socket: s,
                     id: ++this.numConnections,
-                    nickname: 'DEFAULT'
+                    nickname: 'PLACEHOLDER'
                 };
                 this.setSocketEvents(socketObj);
                 this.sockets.push(socketObj);
@@ -35,15 +36,21 @@ class Server {
     }
 
     setSocketEvents(socketObj) {
-        var self = this;
+        const self = this;
 
         socketObj.socket.on('data', function (data) {
-            var message = data.toString();
+            const message = data.toString();
 
-            self.broadcast(socketObj.id, message);
-
-            // Log it to the server output
-            console.log(message);
+            if (message[0] == '/' && message.length > 1) {
+                let command = message.match(/[a-z]+\b/)[0];
+                let argument = message.substr(command.length+2, message.length);
+                self.processCommand(socketObj, command, argument);
+            }
+            else {
+                self.broadcast(socketObj.id, message);
+                // Log it to the server output
+                console.log(message);
+            }
         });
 
 
@@ -63,7 +70,23 @@ class Server {
             
         });
     }
-
+    processCommand(socketObj, command, argument) {
+        switch (command) {
+            case 'nick':
+                if (socketObj.nickname !== 'PLACEHOLDER') {
+                    this.broadcast(socketObj.id, `${socketObj.nickname} changed their nickname to ${argument}`);
+                }
+                else {
+                    this.broadcast(socketObj.id,  `${argument} joined the room`);
+                }
+                console.log(`${utils.getTimestamp()} ${argument} joined the room`);
+                socketObj.nickname = argument;
+                break;
+            // TODO: ADD MORE COMMANDS
+            default:
+                break;
+        }
+    }
     broadcast(senderId, message) {
         if (this.sockets.length === 0) {
             console.log('No users in the chat');
