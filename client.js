@@ -11,7 +11,9 @@ function startClient() {
         port: port, 
         host: host, 
     }, () => {
-        client.write(`${myNick} joined the room.`);
+        const date = new Date();
+        const currentTime = `[${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}]`;
+        client.write(`${currentTime} ${myNick} joined the room.`);
     });
 
     client.on('data', function (data) {
