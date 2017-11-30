@@ -1,11 +1,19 @@
 const net = require('net');
+const scanner = require('readline').createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
 
 class Server {
-    constructor() {
+    constructor(size) {
         this.sockets = [];
+        this.MAX_NUM_CONNECTIONS = size;
         this.numConnections = 0;
 
         net.createServer((s) => {
+            if (this.numConnections >= this.MAX_NUM_CONNECTIONS) {
+                s.end("Max number in room reached");
+            }
             let socketObj = {
                 socket: s,
                 id: ++this.numConnections
@@ -35,13 +43,19 @@ class Server {
 
 
         // When client leaves
-        socketObj.socket.on('end', function () {
+        socketObj.socket.on('end', function (socket) {
+            
+            // Since this checks for general disconnects
+            // A special case is in place for reaching 
+            // The max number of connections
+            if (self.size < self.MAX_NUM_CONNECTIONS) {
+                // Remove client from socket array
+                self.removeSocket(socket);
 
-            // Remove client from socket array
-            self.removeSocket(socket);
-
-            // Notify all clients
-            this.broadcast(socketObj.id, "Someone left the server!");
+                // Notify all clients
+                self.broadcast(socketObj.id, "Someone left the server!");
+            }
+            
         });
     }
 
@@ -59,8 +73,22 @@ class Server {
 
     // Remove disconnected client from sockets array
     removeSocket(socket) {
-        sockets.splice(sockets.indexOf(socket), 1);
+        this.sockets.splice(this.sockets.indexOf(socket), 1);
     }
 }
 
-new Server();
+scanner.on('line', (capacity) => {
+    let size = Number.parseInt(capacity);
+
+    if (isNaN(size)) {
+        process.stdout.write('Please enter a valid integer\n> ');
+    }
+    else {
+        scanner.close();
+        process.stdin.destroy();
+        new Server(size);
+    }
+});
+
+process.stdout.write('Please enter the room capacity\n> ');
+

@@ -19,8 +19,8 @@ function startClient() {
         console.log(data);
     });
 
-    client.on('end', function () {
-        console.log('Server has disconnected.');
+    client.on('end', (err) => {
+        console.log('Disconnected from server');
         process.exit();
     });
 }
