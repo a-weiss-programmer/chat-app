@@ -9,21 +9,23 @@ let myNick = null;
 function startClient() {
     client = net.connect({ 
         port: port, 
-        host: host, 
-    }, () => {
+        host: host,
+    });
+    
+    client.on('connect', () => {
         const date = new Date();
         const currentTime = `[${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}]`;
         client.write(`${currentTime} ${myNick} joined the room.`);
     });
 
+    client.on('end', (err) => {
+        console.log('Disconnected from server');
+        process.exit();
+    });
+
     client.on('data', function (data) {
         data = data.toString();
         console.log(data);
-    });
-
-    client.on('end', function () {
-        console.log('Server has disconnected.');
-        process.exit();
     });
 }
 

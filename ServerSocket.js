@@ -1,18 +1,30 @@
 const net = require('net');
+const scanner = require('readline').createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
 
 class Server {
-    constructor() {
+    constructor(MAX_NUM_CONNECTIONS) {
         this.sockets = [];
+        this.MAX_NUM_CONNECTIONS = MAX_NUM_CONNECTIONS;
         this.numConnections = 0;
 
         net.createServer((s) => {
-            let socketObj = {
-                socket: s,
-                id: ++this.numConnections,
-                nickname: 'default_nick'
-            };
-            this.setSocketEvents(socketObj);
-            this.sockets.push(socketObj);
+            // Room capacity meet
+            if (this.numConnections >= this.MAX_NUM_CONNECTIONS) {
+                s.end("Room at capacity");
+            }
+            else {
+                let socketObj = {
+                    socket: s,
+                    id: ++this.numConnections,
+                    nickname: 'DEFAULT'
+                };
+                this.setSocketEvents(socketObj);
+                this.sockets.push(socketObj);
+            }
+            
         })
         .on('error', (error) => {
             console.error(error.message);
@@ -24,8 +36,8 @@ class Server {
 
     setSocketEvents(socketObj) {
         var self = this;
-        socketObj.socket.on('data', function (data) {
 
+        socketObj.socket.on('data', function (data) {
             var message = data.toString();
 
             self.broadcast(socketObj.id, message);
@@ -36,13 +48,19 @@ class Server {
 
 
         // When client leaves
-        socketObj.socket.on('end', function () {
+        socketObj.socket.on('end', function (socket) {
+            
+            // Since this checks for general disconnects
+            // A special case is in place for reaching 
+            // The max number of connections
+            if (self.size < self.MAX_NUM_CONNECTIONS) {
+                // Remove client from socket array
+                self.removeSocket(socket);
 
-            // Remove client from socket array
-            self.removeSocket(socket);
-
-            // Notify all clients
-            this.broadcast(socketObj.id, "Someone left the server!");
+                // Notify all clients
+                self.broadcast(socketObj.id, "Someone left the server!");
+            }
+            
         });
     }
 
@@ -60,8 +78,22 @@ class Server {
 
     // Remove disconnected client from sockets array
     removeSocket(socket) {
-        sockets.splice(sockets.indexOf(socket), 1);
+        this.sockets.splice(this.sockets.indexOf(socket), 1);
     }
 }
 
-new Server();
+process.stdout.write('Please enter the room capacity\n> ');
+scanner.on('line', (capacity) => {
+    let size = Number.parseInt(capacity);
+
+    if (isNaN(size)) {
+        process.stdout.write('Please enter a valid integer\n> ');
+    }
+    else {
+        scanner.close();
+        process.stdin.destroy();
+        new Server(size);
+    }
+});
+
+
