@@ -1,14 +1,17 @@
 const net = require('net');
 const readline = require('readline');
 const host = process.argv[2] || 'localhost';
-const port = process.argv[3] || 5000;
+const port = process.argv[3] || 8080;
 
 let client = null;
 let myNick = null;
 
 function startClient() {
-    client = net.connect({ port: port, host: host }, () => {
-        client.write("Hello, I'm " + myNick);
+    client = net.connect({ 
+        port: port, 
+        host: host, 
+    }, () => {
+        client.write(`${myNick} joined the room.`);
     });
 
     client.on('data', function (data) {

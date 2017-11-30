@@ -1,0 +1,36 @@
+{
+  "name": "chat-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "client.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/caseylargent/chat-app.git"
+  },
+  "keywords": [],
+  "contributors": [
+    {
+      "name": "Casey Largent",
+      "email": "caseylargent@unomaha.edu"
+    },
+    {
+      "name": "Erik Shafer",
+      "email": "eshafer@unomaha.edu"
+    },
+    {
+      "name": "Kevin Nicklen",
+      "email": "knicklen@unomaha.edu"
+    }
+  ],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/caseylargent/chat-app/issues"
+  },
+  "homepage": "https://github.com/caseylargent/chat-app#readme",
+  "devDependencies": {
+    "eslint": "^4.12.1"
+  }
+}
