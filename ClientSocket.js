@@ -40,7 +40,7 @@ class ClientSocket {
 }
 
 function getNick() {
-    console.log("What's your name?");
+    process.stdout.write("What's your name?\n> ");
 }
 
 function main() {
