@@ -43,7 +43,7 @@ class Server {
         const self = this;
 
         socketObj.socket.on('data', (data) => {
-            const message = data.toString();
+            let message = data.toString();
 
             if (message[0] == '/' && message.length > 1) {
                 let command = message.match(/[a-z]+\b/)[0];
