@@ -1,5 +1,7 @@
 const net = require('net');
 const utils = require('./utils');
+const _ = require('lodash');
+
 const scanner = require('readline').createInterface({
     input: process.stdin,
     output: process.stdout
@@ -35,9 +37,7 @@ class Server {
         });
     }
 
-    formatMessage(nickname, msg) {
-        return `${utils.getTimestamp()} ${nickname}: ${msg}`;
-    }
+
 
     setSocketEvents(socketObj) {
         const self = this;
@@ -51,7 +51,7 @@ class Server {
                 self.processCommand(socketObj, command, argument);
             }
             else {
-                message = self.formatMessage(socketObj.nickname, message);
+                message = utils.formatMessage(socketObj.nickname, message);
                 self.broadcast(socketObj.id, message);
                 // Log it to the server output
                 console.log(message);
@@ -81,19 +81,32 @@ class Server {
 
     }
     processCommand(socketObj, command, argument) {
-        let message;
+        let broadcastMessage;
         let timeStamp = utils.getTimestamp();
         switch (command) {
             case 'nick':
                 if (socketObj.nickname !== 'PLACEHOLDER') {
-                    message = `${timeStamp} ${socketObj.nickname} changed their nickname to ${argument}`;
+                    broadcastMessage = `${timeStamp} ${socketObj.nickname} changed their nickname to ${argument}`;
                 }
                 else {
-                    message = `${timeStamp} ${argument} joined the room`;
+                    if (this.sockets.length > 1) {
+                        let usersInRoom = "Users in the room: "
+                        this.sockets.forEach(client => {
+                            if (!_.isEqual(client, socketObj)) {
+                                usersInRoom += `${client.nickname}, `;
+                            }
+                        });
+                        usersInRoom = usersInRoom.slice(0, usersInRoom.length - 2);
+                        socketObj.socket.write(usersInRoom);
+                    }
+                    else {
+                        socketObj.socket.write(`You're the only user in the room. Invite your friends!`);
+                    }
+                    broadcastMessage = `${timeStamp} ${argument} joined the room`;
                 }
                 
-                this.broadcast(socketObj.id, message);
-                console.log(`${message}`);
+                this.broadcast(socketObj.id, broadcastMessage);
+                console.log(`${broadcastMessage}`);
                 socketObj.nickname = argument;
                 break;
             // TODO: ADD MORE COMMANDS

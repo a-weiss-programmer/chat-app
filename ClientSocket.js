@@ -1,5 +1,7 @@
 const net = require('net');
 const readline = require('readline');
+const utils = require('./utils');
+
 const HOST = 'localhost';
 const PORT = 8080;
 
@@ -21,16 +23,17 @@ class ClientSocket {
     setClientEventListeners() {
         const self = this;
         this.client.on('connect', () => {
+            utils.consoleOut(scanner, 'Welcome to the "IRC" chat room!');
             self.send(`/nick ${this.myNick}`);
         });
 
         this.client.on('end', (err) => {
-            console.log('Disconnected from server');
+            utils.consoleOut(scanner, 'Disconnected from server');
             process.exit();
         });
 
         this.client.on('data', (data) => {
-            console.log(data.toString());
+            utils.consoleOut(scanner, data.toString());
         });
     }
 
@@ -40,11 +43,11 @@ class ClientSocket {
 }
 
 function getNick() {
-    process.stdout.write("What's your name?\n> ");
+    utils.consoleOut(scanner, "What's your name?");
 }
 
 function main() {
-    let client;    
+    let client;
     scanner.on('line', (line) => {
         if (!client) {
             line = line.trim();
@@ -56,10 +59,12 @@ function main() {
             }
         }
         else {
+            // Magic line to make it so the chat response doesn't show up twice to the sending client
+            readline.moveCursor(process.stdout, 0, -1);
+            utils.consoleOut(scanner, utils.formatMessage(client.myNick, line));
             client.send(`${line}`);
         }
     });
-
     getNick();
 }
 

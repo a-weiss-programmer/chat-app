@@ -3,4 +3,14 @@ function getTimestamp() {
     return `[${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}]`;
 }
 
-module.exports = { getTimestamp };
+function consoleOut(scanner, msg) {
+    process.stdout.clearLine();
+    process.stdout.cursorTo(0);
+    console.log(msg);
+    scanner.prompt(true);
+}
+
+function formatMessage(nickname, msg) {
+    return `${getTimestamp()} ${nickname}: ${msg}`;
+}
+module.exports = { getTimestamp, consoleOut, formatMessage };
