@@ -1,58 +1,66 @@
 const net = require('net');
 const readline = require('readline');
-const host = process.argv[2] || 'localhost';
-const port = process.argv[3] || 8080;
-
-let client = null;
-let myNick = null;
-
-function startClient() {
-    client = net.connect({ 
-        port: port, 
-        host: host,
-    });
-    
-    
-    client.on('connect', () => {
-        client.write(`/nick ${myNick}`);
-    });
-
-    client.on('end', (err) => {
-        console.log('Disconnected from server');
-        process.exit();
-    });
-
-    client.on('data', function (data) {
-        data = data.toString();
-        console.log(data);
-    });
-}
-
-function getNick() {
-    console.log("What's your name?");
-}
-
+const HOST = 'localhost';
+const PORT = 8080;
 
 const scanner = readline.createInterface({
     input: process.stdin,
     output: process.stdout
 });
 
-scanner.on('line', function (line) {
-    if (!myNick) {
-        line = line.trim();
-        if (line.length < 1) {
-            getNick();
+class ClientSocket {
+    constructor(myNick) {
+        this.myNick = myNick;
+        this.client = net.connect({ 
+            port: PORT,
+            host: HOST
+        });
+        this.setClientEventListeners();
+    }
+
+    setClientEventListeners() {
+        const self = this;
+        this.client.on('connect', () => {
+            self.send(`/nick ${this.myNick}`);
+        });
+
+        this.client.on('end', (err) => {
+            console.log('Disconnected from server');
+            process.exit();
+        });
+
+        this.client.on('data', (data) => {
+            console.log(data.toString());
+        });
+    }
+
+    send(msg) {
+        this.client.write(`${msg}`);
+    }
+}
+
+function getNick() {
+    console.log("What's your name?");
+}
+
+function main() {
+    let client;    
+    scanner.on('line', (line) => {
+        if (!client) {
+            line = line.trim();
+            if (line.length < 1) {
+                getNick();
+            }
+            else {
+                client = new ClientSocket(line);
+            }
         }
         else {
-            myNick = line;
-            startClient();
+            client.send(`${line}`);
         }
-    } else {
-        const date = new Date();
-        const currentTime = `[${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}]`;
-        client.write(`${currentTime} ${myNick}: ${line}`);
-    }
-});
+    });
 
-getNick();
+    getNick();
+}
+
+main();
