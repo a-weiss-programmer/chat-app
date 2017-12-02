@@ -11,6 +11,7 @@ const scanner = readline.createInterface({
 });
 
 scanner.setPrompt('> ');
+
 class ClientSocket {
     constructor(myNick) {
         this.myNick = myNick;
@@ -60,7 +61,7 @@ function main() {
                 client = new ClientSocket(line);
             }
         }
-        else {
+        else if (line.length > 0) {
             // Magic line to make it so the chat response doesn't show up twice to the sending client
             readline.moveCursor(process.stdout, 0, -1);
             if (!utils.isCommand(line)) {
@@ -76,11 +77,18 @@ function main() {
                     if (possibleCommand.command === 'nick') {
                         client.myNick = possibleCommand.argument;
                         utils.consoleOut(scanner, `You changed your nickname to ${client.myNick}`);
+                        scanner.prompt(true);
                     }
                     process.stdout.clearLine();
                 }
             }
             client.send(`${line}`);
+        }
+        else {
+            readline.moveCursor(process.stdout, 0, -1);
+            process.stdout.clearLine();
+            process.stdout.cursorTo(0);
+            scanner.prompt(true);
         }
     });
     getNick();

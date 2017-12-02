@@ -44,16 +44,18 @@ class Server {
         const self = this;
 
         socketObj.socket.on('data', (data) => {
-            let message = utils.getCommand(data.toString());
+            if (data.length > 0) {
+                let message = utils.getCommand(data.toString());
 
-            if (message) {
-                self.processCommand(socketObj, message.command, message.argument);
-            }
-            else {
-                message = data.toString();
-                message = utils.formatMessage(socketObj.nickname, message);
-                self.broadcast(socketObj.id, message);
-                console.log(message);
+                if (message) {
+                    self.processCommand(socketObj, message.command, message.argument);
+                }
+                else {
+                    message = data.toString();
+                    message = utils.formatMessage(socketObj.nickname, message);
+                    self.broadcast(socketObj.id, message);
+                    console.log(message);
+                }
             }
         });
 
@@ -67,14 +69,12 @@ class Server {
             if (self.numConnections <= self.MAX_NUM_CONNECTIONS) {
                 let timeStamp = utils.getTimestamp();
                 let message = `${timeStamp} ${socketObj.nickname} left the room`;
-                // Remove client from socket array
+
                 self.removeSocket(socketObj);
 
-                // Notify all clients
-                self.broadcast(socketObj.id, message);
-
-                // Log messages
                 console.log(message);
+
+                self.broadcast(socketObj.id, message);
             }
         });
 
