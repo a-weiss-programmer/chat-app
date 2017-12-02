@@ -1,8 +1,12 @@
 const COMMANDS = {nick: 'nick', afk: 'afk'};
 
+function addZeroBefore(n) {
+    return (n < 10 ? '0' : '') + n;
+  }
+
 function getTimestamp() {
     const date = new Date();
-    return `[${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}]`;
+    return `[${addZeroBefore(date.getHours())}:${addZeroBefore(date.getMinutes())}:${addZeroBefore(date.getSeconds())}]`;
 }
 
 function consoleOut(scanner, msg) {
