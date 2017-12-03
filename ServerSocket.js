@@ -22,7 +22,8 @@ class Server {
                 let socketObj = {
                     socket: s,
                     id: ++this.numConnections,
-                    nickname: 'PLACEHOLDER'
+                    nickname: 'PLACEHOLDER',
+                    isAFK: false
                 };
                 this.setSocketEvents(socketObj);
                 this.sockets.push(socketObj);
@@ -43,18 +44,18 @@ class Server {
         const self = this;
 
         socketObj.socket.on('data', (data) => {
-            let message = data.toString();
+            if (data.length > 0) {
+                let message = utils.getCommand(data.toString());
 
-            if (message[0] == '/' && message.length > 1) {
-                let command = message.match(/[a-z]+\b/)[0];
-                let argument = message.substr(command.length+2, message.length);
-                self.processCommand(socketObj, command, argument);
-            }
-            else {
-                message = utils.formatMessage(socketObj.nickname, message);
-                self.broadcast(socketObj.id, message);
-                // Log it to the server output
-                console.log(message);
+                if (message) {
+                    self.processCommand(socketObj, message.command, message.argument);
+                }
+                else {
+                    message = data.toString();
+                    message = utils.formatMessage(socketObj.nickname, message);
+                    self.broadcast(socketObj.id, message);
+                    console.log(message);
+                }
             }
         });
 
@@ -68,51 +69,67 @@ class Server {
             if (self.numConnections <= self.MAX_NUM_CONNECTIONS) {
                 let timeStamp = utils.getTimestamp();
                 let message = `${timeStamp} ${socketObj.nickname} left the room`;
-                // Remove client from socket array
+
                 self.removeSocket(socketObj);
 
-                // Notify all clients
-                self.broadcast(socketObj.id, message);
-
-                // Log messages
                 console.log(message);
+
+                self.broadcast(socketObj.id, message);
             }
         });
 
     }
+
+    getUsersInRoom(client) {
+        let message;
+        if (this.sockets.length > 1) {
+            message = "Users in the room: "; 
+            this.sockets.forEach(c => {
+                if (!_.isEqual(client, c)) {
+                    message += `${c.nickname}, `;
+                }
+            });
+            message = message.slice(0, message.length - 2);
+        }
+        else {
+            message = `You're the only user in the room. Invite your friends!`;
+        }
+        return message;
+    }
+
     processCommand(socketObj, command, argument) {
         let broadcastMessage;
+        let userMessage;
         let timeStamp = utils.getTimestamp();
         switch (command) {
-            case 'nick':
+            case utils.COMMANDS.nick:
                 if (socketObj.nickname !== 'PLACEHOLDER') {
                     broadcastMessage = `${timeStamp} ${socketObj.nickname} changed their nickname to ${argument}`;
                 }
                 else {
-                    if (this.sockets.length > 1) {
-                        let usersInRoom = "Users in the room: "
-                        this.sockets.forEach(client => {
-                            if (!_.isEqual(client, socketObj)) {
-                                usersInRoom += `${client.nickname}, `;
-                            }
-                        });
-                        usersInRoom = usersInRoom.slice(0, usersInRoom.length - 2);
-                        socketObj.socket.write(usersInRoom);
-                    }
-                    else {
-                        socketObj.socket.write(`You're the only user in the room. Invite your friends!`);
-                    }
+                    userMessage = this.getUsersInRoom(socketObj);
                     broadcastMessage = `${timeStamp} ${argument} joined the room`;
                 }
-                
-                this.broadcast(socketObj.id, broadcastMessage);
-                console.log(`${broadcastMessage}`);
                 socketObj.nickname = argument;
                 break;
-            // TODO: ADD MORE COMMANDS
-            default:
+            case utils.COMMANDS.afk:
+                socketObj.isAFK = !socketObj.isAFK;
+                broadcastMessage = socketObj.isAFK ? `${socketObj.nickname} went AFK` :
+                                                     `${socketObj.nickname} is back!`;
+                broadcastMessage = utils.formatEventMessage(broadcastMessage);
+                userMessage = socketObj.isAFK ? `You have gone AFK. Type /afk to receive messages again` :
+                                                `You are not AFK anymore. Type /afk to go AFK again`;
                 break;
+            default:
+                broadcastMessage = utils.formatMessage(socketObj.nickname, `/${command} ${argument}`);
         }
+
+        this.broadcast(socketObj.id, broadcastMessage);
+
+        if (userMessage)
+            socketObj.socket.write(userMessage);
+
+        console.log(broadcastMessage);
     }
     broadcast(senderId, message) {
         if (this.sockets.length === 0) {
@@ -121,7 +138,7 @@ class Server {
         }
 
         this.sockets.forEach((client) => {
-            if (client.id === senderId) return;
+            if (client.id === senderId || client.isAFK) return;
             client.socket.write(message);
         });
     }
