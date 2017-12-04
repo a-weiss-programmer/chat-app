@@ -23,7 +23,13 @@ Using the **NodeJS** JavaScript runtime, we developed a chatroom reminiscent of 
 2. Enter your nickname
 3. Begin chatting!
 
+## __Bugs__
+1. **Return Carriage**: There is currently a cross-compatability issue with Macintosh (Unix) and Windows when submitting to chat. Macs currently distort the timestamp brackets slightly.
+
 ## __Features__
+
+* **Dependencies**
+    1. *NodeJS*: Node is a runtime environment for JavaScript. It must be downloaded (`https://nodejs.org/en/`, latest stable is `8.9.1`). 
 
 * **Entering the Server**
     * Users already connected are displayed in a list for the newly connected client. If no one is connected, the client is encouraged to invite friends.
@@ -38,5 +44,5 @@ Using the **NodeJS** JavaScript runtime, we developed a chatroom reminiscent of 
 * ~~**Unique Nicknames**~~
     * Currently not implemented. (2017-Dec-03)
 
-* **Logging all messages to a file**
+* ~~**Logging all messages to a file**~~
     * Currently not implemented. (2017-Dec-03)
