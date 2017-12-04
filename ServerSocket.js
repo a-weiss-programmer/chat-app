@@ -46,7 +46,6 @@ class Server {
         socketObj.socket.on('data', (data) => {
             if (data.length > 0) {
                 let message = utils.getCommand(data.toString());
-
                 if (message) {
                     self.processCommand(socketObj, message.command, message.argument);
                 }
@@ -62,7 +61,6 @@ class Server {
 
         // When client leaves
         socketObj.socket.on('end', (socket) => {
-            
             // Since this checks for disconnects of any kind
             // A special case is in place for automatically
             // disconnecting sockets when the room is at capacity.
@@ -120,11 +118,15 @@ class Server {
                 userMessage = socketObj.isAFK ? `You have gone AFK. Type /afk to receive messages again` :
                                                 `You are not AFK anymore. Type /afk to go AFK again`;
                 break;
+            case utils.COMMANDS.exit:
+                this.removeSocket(socketObj);
+                socketObj.socket.end(); 
             default:
                 broadcastMessage = utils.formatMessage(socketObj.nickname, `/${command} ${argument}`);
         }
 
-        this.broadcast(socketObj.id, broadcastMessage);
+        if (broadcastMessage)
+            this.broadcast(socketObj.id, broadcastMessage);
 
         if (userMessage)
             socketObj.socket.write(userMessage);

@@ -1,4 +1,4 @@
-const COMMANDS = {nick: 'nick', afk: 'afk'};
+const COMMANDS = {nick: 'nick', afk: 'afk', exit: 'exit'};
 
 function addZeroBefore(n) {
     return (n < 10 ? '0' : '') + n;
