@@ -1,22 +1,29 @@
 
-# Node Chat App
+# __Node Chat App__
 
 Casey Largent, Kevin Nicklen, and Erik Shafer
 
-## Project Objective
+## __Project Objective__
 
 "Develop a simple chat client in the language of your choice." - **Gregory Gelfond** (2017)
 
-## High-Level Overview
+## __High-Level Overview__
 
 Using the **NodeJS** JavaScript runtime, we developed a chatroom reminiscent of an Internet Relay Chat (*IRC*) application. The chat process works on a *client/server networking model*. Clients are required to obtain the `ClientSocket.js` application, as it comes pre-configured to connect to the `ServerSocket.js` application.
 
-## Getting Started
+## __Getting Started__
 
+### Starting the server
 1. To start the server application: `/node ServerSocket.js` 
-2. To start the client application: `/node ClientSocket.js`
+2. Enter the maximum amount of chat clients allowed.
+3. You're now good to begin running clients!
 
-## Features
+### Starting the client
+1. To start the client application: `/node ClientSocket.js`
+2. Enter your nickname
+3. Begin chatting!
+
+## __Features__
 
 * **Entering the Server**
     * Users already connected are displayed in a list for the newly connected client. If no one is connected, the client is encouraged to invite friends.
