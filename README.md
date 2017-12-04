@@ -1,17 +1,21 @@
 
-# __Node Chat App__
+# __Node Chat App__ (CSCI-3550)
 
 Casey Largent, Kevin Nicklen, and Erik Shafer
 
 ## __Project Objective__
 
-"Develop a simple chat client in the language of your choice." - **Gregory Gelfond** (2017)
+"Develop a simple chat client in the language of your choice." - *Gregory Gelfond (2017)*
 
 ## __High-Level Overview__
 
 Using the **NodeJS** JavaScript runtime, we developed a chatroom reminiscent of an Internet Relay Chat (*IRC*) application. The chat process works on a *client/server networking model*. Clients are required to obtain the `ClientSocket.js` application, as it comes pre-configured to connect to the `ServerSocket.js` application.
 
 ## __Getting Started__
+
+### Dependencies
+
+* **NodeJS**: Node is a runtime environment for JavaScript. It must be downloaded (`https://nodejs.org/en/`, latest stable is `8.9.1`) to run the application.
 
 ### Starting the server
 1. To start the server application: `/node ServerSocket.js` 
@@ -27,9 +31,6 @@ Using the **NodeJS** JavaScript runtime, we developed a chatroom reminiscent of 
 1. **Return Carriage**: There is currently a cross-compatability issue with Macintosh (Unix) and Windows when submitting to chat. Macs currently distort the timestamp brackets slightly.
 
 ## __Features__
-
-* **Dependencies**
-    1. *NodeJS*: Node is a runtime environment for JavaScript. It must be downloaded (`https://nodejs.org/en/`, latest stable is `8.9.1`). 
 
 * **Entering the Server**
     * Users already connected are displayed in a list for the newly connected client. If no one is connected, the client is encouraged to invite friends.
