@@ -90,9 +90,4 @@ function getCommand(msg) {
     }
     return null;
 }
-<<<<<<< HEAD
-
-module.exports = { getTimestamp, consoleOut, formatMessage, formatEventMessage, isCommand, getCommand, COMMANDS };
-=======
 module.exports = { getTimestamp, consoleOut, formatMessage, formatEventMessage, isCommand, getCommand, displayHelpMessage, COMMANDS };
->>>>>>> 3d5d6f6f3e2389521c4ff791066c00a22febfce0
