@@ -32,6 +32,14 @@ Using the **NodeJS** JavaScript runtime, we developed a chatroom reminiscent of 
 
 1. **Return Carriage**: There is currently a cross-compatability issue with Macintosh (Unix) and Windows when submitting to chat. Macs currently distort the timestamp brackets slightly.
 
+1. **Commands: /nick and /help**: There is an issue that once a client types in either `/nick` and `/help`, they will need to hit enter (return carriage) one more time. This is due to the chat submission implementation that begins with the `>` arrow, and how the last command submitted it overwritten with a timestamp, nickname, and chat message.
+
+    * Help command `/help`
+    * Blank line.
+    * Hit enter to dispaly arrow `>`
+    * User types message: `> hello`
+    * Processed message: `[23:59:59] Erik: hello`
+
 ## __Features__
 
 * **Entering the Server**
