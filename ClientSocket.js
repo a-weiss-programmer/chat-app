@@ -67,6 +67,7 @@ function main() {
             }
         }
         else if (line.length > 0) {
+            let sendMessage = true;
             // Magic line to make it so the chat response doesn't show up twice to the sending client
             readline.moveCursor(process.stdout, 0, -1);
             if (!utils.isCommand(line)) {
@@ -79,15 +80,24 @@ function main() {
                     utils.consoleOut(scanner, utils.formatMessage(client.myNick, line));
                 }
                 else {
-                    if (possibleCommand.command === 'nick') {
-                        client.myNick = possibleCommand.argument;
-                        utils.consoleOut(scanner, `You changed your nickname to ${client.myNick}`);
-                        scanner.prompt(true);
+                    switch (possibleCommand.command) {
+                        case utils.COMMANDS.help:
+                            utils.displayHelpMessage(scanner);
+                            sendMessage = false;
+                            process.stdout.cursorTo(0);
+                            scanner.prompt(true);
+                            break;
+                        case utils.COMMANDS.nick:
+                            client.myNick = possibleCommand.argument;
+                            utils.consoleOut(scanner, `You changed your nickname to ${client.myNick}`);
+                            scanner.prompt(true);
+                            break;
                     }
                     process.stdout.clearLine();
                 }
             }
-            client.send(`${line}`);
+            if (sendMessage)
+                client.send(`${line}`);
         }
         else {
             readline.moveCursor(process.stdout, 0, -1);
