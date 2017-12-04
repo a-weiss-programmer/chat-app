@@ -1,4 +1,4 @@
-const COMMANDS = {nick: 'nick', afk: 'afk', exit: 'exit'};
+const COMMANDS = {nick: 'nick', afk: 'afk', exit: 'exit', help: 'help'};
 
 /**
  * Appends a zero if the number is not 2 digits
@@ -29,6 +29,19 @@ function consoleOut(scanner, msg) {
     process.stdout.cursorTo(0);
     console.log(msg);
     scanner.prompt(true);
+}
+
+
+function displayHelpMessage(scanner) {
+    let msg = `
+    These are the commands that are available for your use, kind Sir:
+    /afk 		    -This command will set you to Away From Keyboard (you will not receive messages until using /afk again)
+    /exit		    -This command will disconnect you from the chat
+    /nick [arg]	    -This command will allow you to change your nickname (replace [arg] with desired nickname)
+    /help 		    -This command will produce a brief overview of the chat's commands
+    Created by Casey Largent, Kevin Nicklen, and Erik Shafer 2017
+    `;
+    consoleOut (scanner, msg);
 }
 
 /**
@@ -77,5 +90,9 @@ function getCommand(msg) {
     }
     return null;
 }
+<<<<<<< HEAD
 
 module.exports = { getTimestamp, consoleOut, formatMessage, formatEventMessage, isCommand, getCommand, COMMANDS };
+=======
+module.exports = { getTimestamp, consoleOut, formatMessage, formatEventMessage, isCommand, getCommand, displayHelpMessage, COMMANDS };
+>>>>>>> 3d5d6f6f3e2389521c4ff791066c00a22febfce0
