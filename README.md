@@ -35,15 +35,19 @@ Using the **NodeJS** JavaScript runtime, we developed a chatroom reminiscent of 
 * **Entering the Server**
     * Users already connected are displayed in a list for the newly connected client. If no one is connected, the client is encouraged to invite friends.
 
+* **Help Command**
+    * `/help`
+    * Brings up commands to help users understand the client application better.
+
 * **Away From Keyboard**
     * `/afk`
-    *  Inbound messages are not shown to the client. A notification for going or coming back from *AFK* is broadcasted to the server.
+    * Inbound messages are not shown to the client. A notification for going or coming back from *AFK* is broadcasted to the server.
 
 * **Exiting the Server**
-    * `/exit` Properly exits the server. Broadcasted across chat.
+    * `/exit` Properly exits the server.
+    * Broadcasts across chat.
 
-* ~~**Unique Nicknames**~~
-    * Currently not implemented. (2017-Dec-03)
-
-* ~~**Logging all messages to a file**~~
-    * Currently not implemented. (2017-Dec-03)
+* **Changing Nickname**
+    * `/nick _____`
+    * Replace underlines with your new nickname.
+    * Broadcasts change to chat.
