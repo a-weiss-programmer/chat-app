@@ -10,6 +10,11 @@ const scanner = readline.createInterface({
     output: process.stdout
 });
 
+/**
+ * Client that connects to the server. Uses the readline module and
+ * uses some "console" magic to make it seem more like an IRC chat client
+ * @class ClientSocket
+ */
 class ClientSocket {
     constructor(myNick) {
         this.myNick = myNick;
@@ -20,18 +25,26 @@ class ClientSocket {
         this.setClientEventListeners();
     }
 
+    /**
+     * Sets the event listeners of the client based on the net library
+     * @memberof ClientSocket
+     */
     setClientEventListeners() {
         const self = this;
+
+        // Displays a welcome message and sets the server's nickname to the one specified.
         this.client.on('connect', () => {
             utils.consoleOut(scanner, 'Welcome to the "IRC" chat room!');
             self.send(`/nick ${this.myNick}`);
         });
 
+        // Disconnects the client from the server and ends the program
         this.client.on('end', (err) => {
             utils.consoleOut(scanner, 'Disconnected from server');
             process.exit(0);
         });
 
+        // Checks for any data sent back from the server
         this.client.on('data', (data) => {
             let msg = data.toString();
             if (msg.indexOf('/exit') != -1) {
@@ -45,15 +58,28 @@ class ClientSocket {
         });
     }
 
+    /**
+     * Sends a message on the client to the server
+     * 
+     * @param {String} msg The message being sent to the server.
+     * @memberof ClientSocket
+     */
     send(msg) {
         this.client.write(`${msg}`);
     }
 }
 
+/**
+ * Sets the prompt for setting the nickname
+ */
 function getNick() {
     utils.consoleOut(scanner, "What's your name?");
 }
 
+/**
+ * Gets the nickname for the client and initiates a connection with the server.
+ * It takes user input and sends the line to the server.
+ */
 function main() {
     let client;
     scanner.on('line', (line) => {
