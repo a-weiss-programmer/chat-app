@@ -68,6 +68,8 @@ function main() {
         }
         else if (line.length > 0) {
             // Magic line to make it so the chat response doesn't show up twice to the sending client
+            readline.moveCursor(process.stdout, 0, -1);
+            process.stdout.clearLine();
             if (!utils.isCommand(line)) {
                 utils.consoleOut(scanner, utils.formatMessage(client.myNick, line));
             }
