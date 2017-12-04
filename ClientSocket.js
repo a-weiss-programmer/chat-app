@@ -10,8 +10,6 @@ const scanner = readline.createInterface({
     output: process.stdout
 });
 
-scanner.setPrompt('> ');
-
 class ClientSocket {
     constructor(myNick) {
         this.myNick = myNick;
@@ -31,12 +29,19 @@ class ClientSocket {
 
         this.client.on('end', (err) => {
             utils.consoleOut(scanner, 'Disconnected from server');
-            process.exit();
+            process.exit(0);
         });
 
         this.client.on('data', (data) => {
             let msg = data.toString();
-            utils.consoleOut(scanner, msg.toString());
+            if (msg.indexOf('/exit') != -1) {
+                let nickname = msg.split(' ')[1];
+                nickname = nickname.substring(0, nickname.length - 1);
+                utils.consoleOut(scanner, utils.formatEventMessage(`${nickname} has left the room`));
+            }
+            else {
+                utils.consoleOut(scanner, msg.toString());
+            }
         });
     }
 
